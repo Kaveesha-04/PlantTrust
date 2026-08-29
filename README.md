@@ -47,7 +47,7 @@ CREATE DATABASE planttrust;
 cd server
 
 # Create your .env file (or edit the existing one)
-# Default values: DB_HOST=localhost, DB_PORT=5432, DB_USER=postgres, DB_PASSWORD=postgres, DB_NAME=planttrust
+# Values: DB_HOST=localhost, DB_PORT=5432, DB_USER=your_username, DB_PASSWORD=your_password, DB_NAME=planttrust
 
 npm install
 npm start
@@ -88,8 +88,8 @@ Upload a deed image for processing.
 PORT=3001
 DB_HOST=localhost
 DB_PORT=5432
-DB_USER=postgres
-DB_PASSWORD=postgres
+DB_USER=your_username
+DB_PASSWORD=your_password
 DB_NAME=planttrust
 XRPL_NETWORK=wss://s.altnet.rippletest.net:51233
 ```
