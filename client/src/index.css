@@ -15,7 +15,7 @@
   --color-accent: #f59e0b;
   --color-accent-light: #fbbf24;
 
-  /* Background layers */
+  /* Background layer */
   --bg-base: #0a0f1a;
   --bg-surface: #111827;
   --bg-elevated: #1e293b;
@@ -27,11 +27,11 @@
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
 
-  /* Borders */
+  /* Border */
   --border-subtle: rgba(148, 163, 184, 0.12);
   --border-glow: rgba(34, 197, 94, 0.3);
 
-  /* Gradients */
+  /* Gradient */
   --gradient-primary: linear-gradient(135deg, #22c55e, #06b6d4);
   --gradient-bg: radial-gradient(ellipse at 20% 50%, rgba(34, 197, 94, 0.08) 0%, transparent 50%),
                  radial-gradient(ellipse at 80% 20%, rgba(6, 182, 212, 0.06) 0%, transparent 50%),

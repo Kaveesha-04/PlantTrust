@@ -1,6 +1,6 @@
 // ──────────────────────────────────────────────────────────────
 //  PlantTrust — Main Application Component (Member 1: Frontend)
-//  React SPA featuring file upload form and results display
+//  React SPA featuring file upload form and result display
 // ──────────────────────────────────────────────────────────────
 import { useState } from "react";
 import FileUpload from "./components/FileUpload";
