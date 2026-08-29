@@ -88,7 +88,9 @@ export default function FileUpload({ onResult, onProcessing }) {
       const data = await response.json();
 
       if (!response.ok || !data.success) {
-        throw new Error(data.error || "Server returned an error.");
+        let errMsg = data.error || "Server returned an error.";
+        if (data.details) errMsg += ` Details: ${data.details}`;
+        throw new Error(errMsg);
       }
 
       // Success — send result to parent

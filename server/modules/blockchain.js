@@ -37,9 +37,15 @@ async function hashAndAnchor(text) {
 
   try {
     // 3. Generate & fund a wallet from the Testnet faucet
-    console.log("[XRPL] Funding wallet via Testnet faucet…");
-    const { wallet } = await client.fundWallet();
-    console.log("[XRPL] Wallet funded:", wallet.classicAddress);
+    // 3. Generate & fund two wallets from the Testnet faucet
+    //    (Self-payments are rejected as temREDUNDANT, so we need a destination)
+    console.log("[XRPL] Funding sender wallet via Testnet faucet…");
+    const { wallet: sender } = await client.fundWallet();
+    console.log("[XRPL] Sender funded:", sender.classicAddress);
+
+    console.log("[XRPL] Funding destination wallet via Testnet faucet…");
+    const { wallet: receiver } = await client.fundWallet();
+    console.log("[XRPL] Receiver funded:", receiver.classicAddress);
 
     // 4. Encode memo fields as hex
     const memoData = Buffer.from(sha256Hash, "utf8").toString("hex");
@@ -48,12 +54,12 @@ async function hashAndAnchor(text) {
       "hex"
     );
 
-    // 5. Build self-payment transaction with Memo
+    // 5. Build payment transaction with deed hash as Memo
     const prepared = await client.autofill({
       TransactionType: "Payment",
-      Account: wallet.classicAddress,
-      Destination: wallet.classicAddress, // Self-payment to anchor data
-      Amount: xrpl.xrpToDrops("0.000001"), // Minimum amount
+      Account: sender.classicAddress,
+      Destination: receiver.classicAddress,
+      Amount: xrpl.xrpToDrops("1"),
       Memos: [
         {
           Memo: {
@@ -67,7 +73,7 @@ async function hashAndAnchor(text) {
 
     // 6. Sign and submit
     console.log("[XRPL] Submitting transaction…");
-    const signed = wallet.sign(prepared);
+    const signed = sender.sign(prepared);
     const result = await client.submitAndWait(signed.tx_blob);
 
     const txHash = result.result.hash;

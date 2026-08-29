@@ -60,33 +60,44 @@ router.post("/", async (req, res) => {
     );
 
     // ── Step 3: Database — Save record ───────────────────────
-    console.log("\n▶ Step 3/3: Saving record to PostgreSQL…");
-    const record = await insertRecord({
-      filename,
-      extractedText,
-      sha256Hash,
-      txHash,
-      explorerUrl,
-    });
+    let record = null;
+    let dbSkipped = false;
+    try {
+      console.log("\n▶ Step 3/3: Saving record to PostgreSQL…");
+      record = await insertRecord({
+        filename,
+        extractedText,
+        sha256Hash,
+        txHash,
+        explorerUrl,
+      });
+      console.log("[DB] Record saved with ID:", record.id);
+    } catch (dbErr) {
+      console.warn("[DB] Could not save to PostgreSQL (is it running?):", dbErr.message);
+      console.warn("[DB] Skipping database step — returning results without DB record.");
+      dbSkipped = true;
+    }
 
     // ── Clean up uploaded file ───────────────────────────────
     fs.unlinkSync(filePath);
 
     // ── Success Response ─────────────────────────────────────
+    const recordId = record ? record.id : "N/A (DB offline)";
     console.log("\n═══════════════════════════════════════════════");
-    console.log("  ✅ Pipeline Complete — Record ID:", record.id);
+    console.log("  ✅ Pipeline Complete — Record ID:", recordId);
     console.log("═══════════════════════════════════════════════\n");
 
     return res.status(201).json({
       success: true,
       data: {
-        id: record.id,
-        filename: record.filename,
-        extractedText: record.extracted_text,
-        sha256Hash: record.sha256_hash,
-        txHash: record.xrpl_tx_hash,
-        explorerUrl: record.xrpl_explorer_url,
-        createdAt: record.created_at,
+        id: record ? record.id : 0,
+        filename: filename,
+        extractedText: extractedText,
+        sha256Hash: sha256Hash,
+        txHash: txHash,
+        explorerUrl: explorerUrl,
+        createdAt: record ? record.created_at : new Date().toISOString(),
+        dbSkipped: dbSkipped,
       },
     });
   } catch (err) {
