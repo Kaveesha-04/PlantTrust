@@ -88,4 +88,17 @@ async function getAllRecords() {
   return result.rows;
 }
 
-module.exports = { initDB, insertRecord, getAllRecords, pool };
+/**
+ * Checks if a record with the given SHA-256 hash already exists.
+ * @param {string} hash
+ * @returns {Promise<Object|null>} The existing record, or null if not found.
+ */
+async function getRecordByHash(hash) {
+  const result = await pool.query(
+    "SELECT * FROM plant_records WHERE sha256_hash = $1",
+    [hash]
+  );
+  return result.rows.length > 0 ? result.rows[0] : null;
+}
+
+module.exports = { initDB, insertRecord, getAllRecords, getRecordByHash, pool };

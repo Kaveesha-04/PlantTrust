@@ -8,8 +8,8 @@ const path = require("path");
 const fs = require("fs");
 
 const { extractText } = require("../modules/ocr");
-const { hashAndAnchor } = require("../modules/blockchain");
-const { insertRecord } = require("../modules/database");
+const { anchorHash, computeHash } = require("../modules/blockchain");
+const { insertRecord, getRecordByHash } = require("../modules/database");
 
 /**
  * POST /api/deed
@@ -53,11 +53,39 @@ router.post("/", async (req, res) => {
       });
     }
 
+    // ── Step 1.5: Hash and Check for Duplicates ──────────────
+    console.log("\n▶ Step 1.5/3: Checking for existing records…");
+    const sha256Hash = computeHash(extractedText);
+    
+    try {
+      const existingRecord = await getRecordByHash(sha256Hash);
+      if (existingRecord) {
+        console.log("⚠️ Duplicate found! Returning existing record ID:", existingRecord.id);
+        
+        fs.unlinkSync(filePath); // Clean up
+        
+        return res.status(200).json({
+          success: true,
+          data: {
+            id: existingRecord.id,
+            filename: existingRecord.filename,
+            extractedText: existingRecord.extracted_text,
+            sha256Hash: existingRecord.sha256_hash,
+            txHash: existingRecord.xrpl_tx_hash,
+            explorerUrl: existingRecord.xrpl_explorer_url,
+            createdAt: existingRecord.created_at,
+            duplicate: true,
+            dbSkipped: false
+          }
+        });
+      }
+    } catch (dbErr) {
+      console.warn("[DB] Could not check for duplicates (is DB offline?):", dbErr.message);
+    }
+
     // ── Step 2: Blockchain — Hash & Anchor ───────────────────
-    console.log("\n▶ Step 2/3: Hashing & anchoring to XRPL…");
-    const { sha256Hash, txHash, explorerUrl } = await hashAndAnchor(
-      extractedText
-    );
+    console.log("\n▶ Step 2/3: Anchoring to XRPL…");
+    const { txHash, explorerUrl } = await anchorHash(sha256Hash);
 
     // ── Step 3: Database — Save record ───────────────────────
     let record = null;

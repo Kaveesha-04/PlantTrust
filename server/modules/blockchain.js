@@ -19,16 +19,13 @@ function computeHash(text) {
 }
 
 /**
- * Hashes the extracted deed text with SHA-256 and submits a
- * transaction to the XRPL Testnet with the hash embedded as a Memo.
+ * Submits a transaction to the XRPL Testnet with the given hash embedded as a Memo.
  *
- * @param {string} text - The OCR-extracted text to hash and anchor.
+ * @param {string} sha256Hash - The pre-computed SHA-256 hash to anchor.
  * @returns {Promise<{ sha256Hash: string, txHash: string, explorerUrl: string }>}
  */
-async function hashAndAnchor(text) {
-  // 1. Compute SHA-256
-  const sha256Hash = computeHash(text);
-  console.log("[XRPL] SHA-256 hash:", sha256Hash);
+async function anchorHash(sha256Hash) {
+  console.log("[XRPL] Preparing to anchor SHA-256 hash:", sha256Hash);
 
   // 2. Connect to XRPL Testnet
   const client = new xrpl.Client(XRPL_NETWORK);
@@ -90,4 +87,4 @@ async function hashAndAnchor(text) {
   }
 }
 
-module.exports = { hashAndAnchor, computeHash };
+module.exports = { anchorHash, computeHash };
