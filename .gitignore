@@ -23,3 +23,7 @@ server/uploads/*
 # Logs
 *.log
 npm-debug.log*
+
+# Ignored large files
+*.zip
+*.traineddata
