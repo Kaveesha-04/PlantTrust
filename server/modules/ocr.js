@@ -1,8 +1,9 @@
-// ──────────────────────────────────────────────────────────────
-//  PlantTrust — OCR Module (Member 4)
+
+//  PlantTrust — OCR Module
 //  Extracts text from uploaded deed images using Tesseract.js
 // ──────────────────────────────────────────────────────────────
 const { createWorker } = require("tesseract.js");
+
 
 /**
  * Extracts text from an image file using Tesseract.js OCR engine.
