@@ -1,6 +1,7 @@
 // ──────────────────────────────────────────────────────────────
 //  PlantTrust — Blockchain Module (Member 5)
 //  Hashes extracted text (SHA-256) and anchors to XRPL Testnet
+//  Responsibility: XRPL transaction and blockchain hash anchoring
 // ──────────────────────────────────────────────────────────────
 const crypto = require("crypto");
 const xrpl = require("xrpl");
@@ -14,6 +15,7 @@ const EXPLORER_BASE = "https://testnet.xrpl.org/transactions/";
  * @param {string} text
  * @returns {string} Hex-encoded SHA-256 hash.
  */
+// Generate a unique SHA-256 fingerprint for the extracted deed text.
 function computeHash(text) {
   return crypto.createHash("sha256").update(text, "utf8").digest("hex");
 }
